@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    /*
+
     var excel = Excel.createExcel();
     Sheet sheet = excel.sheets.values.first;
     CellIndex cellIndex = CellIndex.indexByString('A1');
@@ -69,8 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
     String outputFile = 'my950.xls';
 
     //stopwatch.reset();
-    List<int>? fileBytes = excel.save();
+    List<int>? fileBytes = excel.save(); // this downloads it if web.
     //print('saving executed in ${stopwatch.elapsed}');
+    /*
     if (fileBytes != null) {
       File(outputFile)
         ..createSync(recursive: true)
@@ -78,7 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
      */
-    generateCSV();
+
+
+
+    //generateCSV();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
