@@ -60,14 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void saveExcelFileInWeb() {
-    var excel = Excel.createExcel();
-    Sheet sheet = excel.sheets.values.first;
-    CellIndex cellIndex = CellIndex.indexByString('A1');
-    sheet.cell(cellIndex).value = 'TestNJW';
 
-    excel.save(); // this downloads it if web.
-  }
   void _incrementCounter() {
 
 
@@ -154,6 +147,24 @@ List<List<dynamic>> generateRows() {
   }
   return rows;
 }
+
+// autodownload csv OR excel file as long as they are in "bytes"
+void webAutoDownload(List<int> bytes) {
+  //NOTE THAT HERE WE USED HTML PACKAGE
+  final blob = Blob([bytes]);
+//It will create downloadable object
+  final url = Url.createObjectUrlFromBlob(blob);
+//It will create anchor to download the file
+  final anchor = document.createElement('a')  as  AnchorElement..href = url..style.display = 'none'
+    ..download = 'yourcsvname2.csv';
+//finally add the csv anchor to body
+  document.body?.children.add(anchor);
+  print(anchor.outerHtml);
+// Cause download by calling this function
+  anchor.click();
+//revoke the object
+  Url.revokeObjectUrl(url);
+}
 void generateCSV(){
 
    List<List<dynamic>> myRows = generateRows();
@@ -163,18 +174,21 @@ void generateCSV(){
 //this csv variable holds entire csv data
 //Now Convert or encode this csv string into utf8
   final bytes = utf8.encode(csv);
-//NOTE THAT HERE WE USED HTML PACKAGE
-  final blob = Blob([bytes]);
-//It will create downloadable object
-  final url = Url.createObjectUrlFromBlob(blob);
-//It will create anchor to download the file
-  final anchor = document.createElement('a')  as  AnchorElement..href = url..style.display = 'none'
-    ..download = 'yourcsvname2.csv';
-//finally add the csv anchor to body
-  document.body?.children.add(anchor);
-// Cause download by calling this function
-  anchor.click();
-//revoke the object
-  Url.revokeObjectUrl(url);
+  webAutoDownload(bytes);
+  saveExcelFileInWeb(myRows);
+}
 
+void saveExcelFileInWeb(List<List<dynamic>> rows) {
+  var excel = Excel.createExcel();
+  Sheet sheet = excel.sheets.values.first;
+  for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    List<dynamic> columnValues = rows[rowIndex];
+    for (int colIndex = 0; colIndex <  columnValues.length; colIndex++) {
+      CellIndex cellIndex = CellIndex.indexByColumnRow(columnIndex: colIndex, rowIndex: rowIndex);
+      sheet.cell(cellIndex).value = columnValues[colIndex];
+    }
+  }
+
+
+  excel.save(); // this downloads it if web.
 }
