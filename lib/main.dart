@@ -60,29 +60,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
-
+  void saveExcelFileInWeb() {
     var excel = Excel.createExcel();
     Sheet sheet = excel.sheets.values.first;
     CellIndex cellIndex = CellIndex.indexByString('A1');
     sheet.cell(cellIndex).value = 'TestNJW';
-    String outputFile = 'my950.xls';
 
-    //stopwatch.reset();
-    List<int>? fileBytes = excel.save(); // this downloads it if web.
-    //print('saving executed in ${stopwatch.elapsed}');
-    /*
-    if (fileBytes != null) {
-      File(outputFile)
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(fileBytes);
-    }
-
-     */
+    excel.save(); // this downloads it if web.
+  }
+  void _incrementCounter() {
 
 
-
-    //generateCSV();
+    generateCSV();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -145,11 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-List<List<dynamic>> rows = [];
 
-void generateCSV(){
-  // we will declare the list of headers that we want
-   List<String> rowHeader = ["Name","Address","Phone"];
+List<List<dynamic>> generateRows() {
+  List<List<dynamic>> rows = [];
+
+  List<String> rowHeader = ["Name10","Address10","Phone10"];
   // here we will make a 2D array to handle a row
   //First add entire row header into our first row
   rows.add(rowHeader);
@@ -157,14 +146,20 @@ void generateCSV(){
   for(int i=0;i<5;i++){
     //everytime loop executes we need to add new row
     List<dynamic> dataRow=[];
-    dataRow.add("NAME :$i");
-    dataRow.add("ADDRESS :$i");
-    dataRow.add("PHONE:$i");
+    dataRow.add("NAME10 :$i");
+    dataRow.add("ADDRESS10 :$i");
+    dataRow.add("PHONE10:$i");
     //lastly add dataRow to our 2d list
     rows.add(dataRow);
   }
+  return rows;
+}
+void generateCSV(){
+
+   List<List<dynamic>> myRows = generateRows();
+
 //now convert our 2d array into the csvlist using the plugin of csv
-  String csv = const ListToCsvConverter().convert(rows);
+  String csv = const ListToCsvConverter().convert(myRows);
 //this csv variable holds entire csv data
 //Now Convert or encode this csv string into utf8
   final bytes = utf8.encode(csv);
@@ -174,7 +169,7 @@ void generateCSV(){
   final url = Url.createObjectUrlFromBlob(blob);
 //It will create anchor to download the file
   final anchor = document.createElement('a')  as  AnchorElement..href = url..style.display = 'none'
-    ..download = 'yourcsvname.csv';
+    ..download = 'yourcsvname2.csv';
 //finally add the csv anchor to body
   document.body?.children.add(anchor);
 // Cause download by calling this function
